@@ -19,3 +19,6 @@ Homestead.json
 Homestead.yaml
 .idea
 .vscode
+/bootstrap/cache/*.php
+*.sqlite
+*.sqlite-journal

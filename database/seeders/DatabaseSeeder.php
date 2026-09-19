@@ -6,7 +6,6 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -16,7 +15,7 @@ class DatabaseSeeder extends Seeder
         $admin = User::create([
             'name' => 'Administrador',
             'email' => 'admin@artigos.local',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'role' => 'admin',
             'bio' => 'Administrador da plataforma YouSay.',
         ]);
@@ -24,7 +23,7 @@ class DatabaseSeeder extends Seeder
         $autor = User::create([
             'name' => 'Braga',
             'email' => 'braga@artigos.local',
-            'password' => Hash::make('password'),
+            'password' => 'password',
             'role' => 'user',
             'bio' => 'Estudante de Engenharia Informática na UGS/FENT.',
         ]);

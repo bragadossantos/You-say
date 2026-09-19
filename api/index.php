@@ -67,7 +67,8 @@ $app = require_once __DIR__ . '/../bootstrap/app.php';
 // Automatically run migrations and seeders on fresh SQLite in /tmp
 if ($connection === 'sqlite' && !empty($firstRun)) {
     try {
-        Artisan::call('migrate', ['--force' => true, '--seed' => true]);
+        $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+        $kernel->call('migrate', ['--force' => true, '--seed' => true]);
     } catch (\Throwable $e) {
         error_log('Initial SQLite migration notice: ' . $e->getMessage());
     }

@@ -1,9 +1,13 @@
 <?php
 
-use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 define('LARAVEL_START', microtime(true));
+
+// Suppress raw deprecation notices from leaking into HTTP output
+ini_set('display_errors', '0');
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
 
 // Setup temporary directories for Vercel's read-only serverless filesystem
 $directories = [
@@ -30,6 +34,14 @@ putenv('VIEW_COMPILED_PATH=/tmp/storage/framework/views');
 $_ENV['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
 $_SERVER['VIEW_COMPILED_PATH'] = '/tmp/storage/framework/views';
 
+// Fallback APP_KEY if not configured in Vercel UI
+if (!getenv('APP_KEY')) {
+    $fallbackKey = 'base64:YQIVvJZdc+Q5iRdwCrp2D4XseJ+raTIPb1KJJpZS/no=';
+    putenv("APP_KEY={$fallbackKey}");
+    $_ENV['APP_KEY'] = $fallbackKey;
+    $_SERVER['APP_KEY'] = $fallbackKey;
+}
+
 // Prevent SCRIPT_NAME from prepending /api to base routes
 if (isset($_SERVER['SCRIPT_NAME']) && $_SERVER['SCRIPT_NAME'] === '/api/index.php') {
     $_SERVER['SCRIPT_NAME'] = '/index.php';
@@ -39,8 +51,8 @@ if (isset($_SERVER['SCRIPT_NAME']) && $_SERVER['SCRIPT_NAME'] === '/api/index.ph
 $connection = getenv('DB_CONNECTION') ?: 'sqlite';
 if ($connection === 'sqlite') {
     $dbPath = '/tmp/database.sqlite';
-    $firstRun = !file_exists($dbPath);
-    if ($firstRun) {
+    $firstRun = !file_exists($dbPath) || filesize($dbPath) === 0;
+    if (!file_exists($dbPath)) {
         touch($dbPath);
     }
     putenv("DB_DATABASE={$dbPath}");
@@ -55,8 +67,7 @@ $app = require_once __DIR__ . '/../bootstrap/app.php';
 // Automatically run migrations and seeders on fresh SQLite in /tmp
 if ($connection === 'sqlite' && !empty($firstRun)) {
     try {
-        $kernel = $app->make(Kernel::class);
-        $kernel->call('migrate', ['--force' => true, '--seed' => true]);
+        Artisan::call('migrate', ['--force' => true, '--seed' => true]);
     } catch (\Throwable $e) {
         error_log('Initial SQLite migration notice: ' . $e->getMessage());
     }

@@ -18,7 +18,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@artigos.local',
             'password' => Hash::make('password'),
             'role' => 'admin',
-            'bio' => 'Administrador da plataforma Artigos UGS.',
+            'bio' => 'Administrador da plataforma YouSay.',
         ]);
 
         $autor = User::create([
@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
                 'user_id' => $autor->id,
                 'category_id' => Category::where('name', $ex['cat'])->first()->id,
                 'title' => $ex['title'],
-                'content' => "<p>Este é um artigo de exemplo gerado automaticamente para demonstrar a plataforma. Edite ou remova este conteúdo e comece a publicar os seus próprios artigos.</p><p>A plataforma Artigos UGS foi criada para permitir que qualquer utilizador partilhe conhecimento de forma livre e organizada, com categorias, comentários, avaliações e muito mais.</p>",
+                'content' => "<p>Este é um artigo de exemplo gerado automaticamente para demonstrar a plataforma. Edite ou remova este conteúdo e comece a publicar os seus próprios artigos.</p><p>A plataforma YouSay foi criada para permitir que qualquer utilizador partilhe conhecimento de forma livre e organizada, com categorias, comentários, avaliações e muito mais.</p>",
                 'published_at' => now(),
             ]);
         }

@@ -14,7 +14,7 @@
 <div class="d-flex">
     <div class="admin-sidebar" style="width:250px;">
         <div class="p-4">
-            <a href="{{ route('home') }}" class="navbar-brand text-white"><i class="bi bi-rocket-takeoff"></i> Artigos<span style="color:#FF5C28">UGS</span></a>
+            <a href="{{ route('home') }}" class="navbar-brand text-white"><i class="bi bi-chat-quote-fill"></i> You<span style="color:#FF5C28">Say</span></a>
             <div class="text-white-50 small mt-1">Painel Administrativo</div>
         </div>
         <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"><i class="bi bi-speedometer2"></i> Dashboard</a>

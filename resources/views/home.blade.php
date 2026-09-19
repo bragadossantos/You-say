@@ -26,7 +26,7 @@
                 <div class="carousel-item active">
                     <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1400&q=80')">
                         <div class="hero-caption">
-                            <h2>Bem-vindo à ArtigosUGS</h2>
+                            <h2>Bem-vindo ao YouSay</h2>
                             <p>Seja o primeiro a publicar um artigo na plataforma.</p>
                         </div>
                     </div>

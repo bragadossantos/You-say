@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-lg navbar-artigos sticky-top py-3">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('home') }}"><i class="bi bi-rocket-takeoff"></i> Artigos<span>UGS</span></a>
+        <a class="navbar-brand" href="{{ route('home') }}"><i class="bi bi-chat-quote-fill"></i> You<span>Say</span></a>
         <button class="navbar-toggler bg-light" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
             <span class="navbar-toggler-icon"></span>
         </button>

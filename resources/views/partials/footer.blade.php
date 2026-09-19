@@ -2,8 +2,8 @@
     <div class="container">
         <div class="row gy-4">
             <div class="col-md-4">
-                <h5 class="text-white"><i class="bi bi-rocket-takeoff"></i> Artigos<span style="color:#FF5C28">UGS</span></h5>
-                <p class="small mb-0">Plataforma aberta de publicação de artigos da comunidade UGS/FENT. Escreva, partilhe e descubra novos conhecimentos.</p>
+                <h5 class="text-white"><i class="bi bi-chat-quote-fill"></i> You<span style="color:#FF5C28">Say</span></h5>
+                <p class="small mb-0">Plataforma aberta de publicação de artigos. Escreva, partilhe e descubra novos conhecimentos no YouSay.</p>
             </div>
             <div class="col-md-4">
                 <h6 class="text-white">Categorias</h6>
@@ -22,6 +22,6 @@
             </div>
         </div>
         <hr class="border-secondary my-4">
-        <p class="small text-center mb-0">&copy; {{ date('Y') }} Artigos UGS — Faculdade de Engenharia e Novas Tecnologias (FENT). Todos os direitos reservados.</p>
+        <p class="small text-center mb-0">&copy; {{ date('Y') }} YouSay. Todos os direitos reservados.</p>
     </div>
 </footer>

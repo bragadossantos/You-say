@@ -5,7 +5,7 @@
 <div class="container auth-wrapper">
     <div class="auth-card">
         <div class="text-center mb-4">
-            <h3 class="brand"><i class="bi bi-rocket-takeoff"></i> Artigos<span>UGS</span></h3>
+            <h3 class="brand"><i class="bi bi-chat-quote-fill"></i> You<span>Say</span></h3>
             <p class="text-muted">Crie a sua conta gratuita</p>
         </div>
         <form action="{{ route('register') }}" method="POST">

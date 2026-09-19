@@ -21,4 +21,5 @@ Homestead.yaml
 .vscode
 /bootstrap/cache/*.php
 *.sqlite
+!database/database.sqlite
 *.sqlite-journal

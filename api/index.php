@@ -64,22 +64,29 @@ if (isset($_SERVER['SCRIPT_NAME']) && $_SERVER['SCRIPT_NAME'] === '/api/index.ph
 // Handle SQLite database in /tmp for serverless runtime if no external cloud DB is configured
 $connection = getenv('DB_CONNECTION') ?: 'sqlite';
 if ($connection === 'sqlite') {
-    $dbPath = '/tmp/database.sqlite';
-    $firstRun = !file_exists($dbPath) || filesize($dbPath) === 0;
-    if (!file_exists($dbPath)) {
-        touch($dbPath);
+    $srcDb = __DIR__ . '/../database/database.sqlite';
+    $dstDb = '/tmp/database.sqlite';
+    $needsMigration = false;
+
+    if (!file_exists($dstDb) || filesize($dstDb) === 0) {
+        if (file_exists($srcDb) && filesize($srcDb) > 0) {
+            copy($srcDb, $dstDb);
+        } else {
+            touch($dstDb);
+            $needsMigration = true;
+        }
     }
-    putenv("DB_DATABASE={$dbPath}");
-    $_ENV['DB_DATABASE'] = $dbPath;
-    $_SERVER['DB_DATABASE'] = $dbPath;
+    putenv("DB_DATABASE={$dstDb}");
+    $_ENV['DB_DATABASE'] = $dstDb;
+    $_SERVER['DB_DATABASE'] = $dstDb;
 }
 
 require __DIR__ . '/../vendor/autoload.php';
 
 $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-// Automatically run migrations and seeders on fresh SQLite in /tmp
-if ($connection === 'sqlite' && !empty($firstRun)) {
+// Automatically run migrations and seeders if starting from scratch without pre-seeded db
+if ($connection === 'sqlite' && !empty($needsMigration)) {
     try {
         $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
         $kernel->call('migrate', ['--force' => true, '--seed' => true]);

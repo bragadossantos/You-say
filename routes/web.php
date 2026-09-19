@@ -17,10 +17,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/pesquisar', [HomeController::class, 'search'])->name('search');
 Route::get('/categoria/{category:slug}', [ArticleController::class, 'category'])->name('articles.category');
-Route::get('/artigos/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 require __DIR__.'/auth.php';
 
+// Article CRUD (auth required) — must come BEFORE the wildcard show route
 Route::middleware('auth')->group(function () {
     Route::get('/meus-artigos', [ArticleController::class, 'my'])->name('articles.my');
     Route::get('/artigos/criar', [ArticleController::class, 'create'])->name('articles.create');
@@ -41,6 +41,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/perfil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/perfil', [ProfileController::class, 'update'])->name('profile.update');
 });
+
+// Public article show — AFTER specific routes so /artigos/criar is not caught
+Route::get('/artigos/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');

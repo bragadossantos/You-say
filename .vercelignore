@@ -1,0 +1,12 @@
+/vendor
+.env
+.env.*
+.git
+.github
+tests
+phpunit.xml
+README.md
+Homestead.json
+Homestead.yaml
+.idea
+.vscode

@@ -61,38 +61,54 @@ if (isset($_SERVER['SCRIPT_NAME']) && $_SERVER['SCRIPT_NAME'] === '/api/index.ph
     $_SERVER['SCRIPT_NAME'] = '/index.php';
 }
 
-// Handle SQLite database in /tmp for serverless runtime if no external cloud DB is configured
-$connection = getenv('DB_CONNECTION') ?: 'sqlite';
-if ($connection === 'sqlite') {
-    $srcDb = __DIR__ . '/../database/database.sqlite';
-    $dstDb = '/tmp/database.sqlite';
-    $needsMigration = false;
+// Detect cloud database (Postgres / Vercel Postgres)
+$isPgsql = !empty(getenv('POSTGRES_URL')) || !empty(getenv('DATABASE_URL')) || getenv('DB_CONNECTION') === 'pgsql';
+if ($isPgsql) {
+    putenv('DB_CONNECTION=pgsql');
+    $_ENV['DB_CONNECTION'] = 'pgsql';
+    $_SERVER['DB_CONNECTION'] = 'pgsql';
+    putenv('SESSION_DRIVER=database');
+    $_ENV['SESSION_DRIVER'] = 'database';
+    $_SERVER['SESSION_DRIVER'] = 'database';
+} else {
+    // Handle SQLite database in /tmp for serverless runtime if no external cloud DB is configured
+    $connection = getenv('DB_CONNECTION') ?: 'sqlite';
+    if ($connection === 'sqlite') {
+        $srcDb = __DIR__ . '/../database/database.sqlite';
+        $dstDb = '/tmp/database.sqlite';
+        $needsMigration = false;
 
-    if (!file_exists($dstDb) || filesize($dstDb) === 0) {
-        if (file_exists($srcDb) && filesize($srcDb) > 0) {
-            copy($srcDb, $dstDb);
-        } else {
-            touch($dstDb);
-            $needsMigration = true;
+        if (!file_exists($dstDb) || filesize($dstDb) === 0) {
+            if (file_exists($srcDb) && filesize($srcDb) > 0) {
+                copy($srcDb, $dstDb);
+            } else {
+                touch($dstDb);
+                $needsMigration = true;
+            }
         }
+        putenv("DB_DATABASE={$dstDb}");
+        $_ENV['DB_DATABASE'] = $dstDb;
+        $_SERVER['DB_DATABASE'] = $dstDb;
     }
-    putenv("DB_DATABASE={$dstDb}");
-    $_ENV['DB_DATABASE'] = $dstDb;
-    $_SERVER['DB_DATABASE'] = $dstDb;
 }
 
 require __DIR__ . '/../vendor/autoload.php';
 
 $app = require_once __DIR__ . '/../bootstrap/app.php';
 
-// Automatically run migrations and seeders if starting from scratch without pre-seeded db
-if ($connection === 'sqlite' && !empty($needsMigration)) {
-    try {
+// Automatically run migrations if needed
+try {
+    if ($isPgsql) {
+        if (!\Illuminate\Support\Facades\Schema::hasTable('users')) {
+            $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+            $kernel->call('migrate', ['--force' => true, '--seed' => true]);
+        }
+    } elseif (!empty($needsMigration)) {
         $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
         $kernel->call('migrate', ['--force' => true, '--seed' => true]);
-    } catch (\Throwable $e) {
-        error_log('Initial SQLite migration notice: ' . $e->getMessage());
     }
+} catch (\Throwable $e) {
+    error_log('Database setup notice: ' . $e->getMessage());
 }
 
 $app->handleRequest(Request::capture());

@@ -48,9 +48,18 @@ if ((isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PRO
     $_SERVER['SERVER_PORT'] = 443;
 }
 
-putenv('SESSION_DRIVER=cookie');
-$_ENV['SESSION_DRIVER'] = 'cookie';
-$_SERVER['SESSION_DRIVER'] = 'cookie';
+// O driver "cookie" guarda os dados da sessão numa cookie extra cujo NOME é o
+// próprio ID de sessão (Illuminate\Session\CookieSessionHandler::write()).
+// Isto significa duas (ou mais, com XSRF-TOKEN) cookies "Set-Cookie" na mesma
+// resposta — o runtime vercel-php nem sempre reencaminha corretamente vários
+// cabeçalhos "Set-Cookie" repetidos, pelo que a cookie com o ID de sessão
+// (necessária para reconhecer o login) acaba por se perder: o login parece
+// funcionar no servidor mas o browser nunca fica autenticado. Usamos "database"
+// (tabela "sessions", já criada pelas migrations) para que só seja preciso
+// entregar UMA cookie fiável com o ID de sessão.
+putenv('SESSION_DRIVER=database');
+$_ENV['SESSION_DRIVER'] = 'database';
+$_SERVER['SESSION_DRIVER'] = 'database';
 
 putenv('SESSION_SECURE_COOKIE=true');
 $_ENV['SESSION_SECURE_COOKIE'] = 'true';

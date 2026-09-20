@@ -41,7 +41,7 @@
                         <select name="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
                             <option value="">Selecione uma categoria...</option>
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
+                                <option value="{{ $cat->id }}" data-type="{{ $cat->type }}" {{ old('category_id') == $cat->id ? 'selected' : '' }}>
                                     {{ $cat->name }}
                                 </option>
                             @endforeach
@@ -60,8 +60,8 @@
                     </div>
                 </div>
 
-                {{-- Image Upload --}}
-                <div class="mb-4">
+                {{-- Image Upload (artigo normal) --}}
+                <div class="mb-4" id="normalImageBlock">
                     <label class="form-label fw-semibold"><i class="bi bi-image"></i> Imagem de capa</label>
                     <div class="upload-area" id="uploadArea">
                         <input type="file" name="image" class="form-control d-none @error('image') is-invalid @enderror"
@@ -82,6 +82,8 @@
                         <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
                 </div>
+
+                @include('articles.partials.thesis-fields')
 
                 {{-- Content --}}
                 <div class="mb-4">
@@ -110,7 +112,7 @@
                     <a href="{{ route('articles.my') }}" class="btn btn-outline-secondary px-4">
                         <i class="bi bi-arrow-left"></i> Cancelar
                     </a>
-                    <button type="submit" class="btn btn-orange btn-lg px-5">
+                    <button type="submit" id="submitBtn" class="btn btn-orange btn-lg px-5">
                         <i class="bi bi-send-fill"></i> Publicar artigo
                     </button>
                 </div>
@@ -169,6 +171,15 @@
 @endpush
 
 @push('scripts')
+<script>
+    window.DOCUMENT_DISK = @json($documentDisk);
+    window.DOCUMENT_PRESIGN_URL = @json(route('articles.document.presign'));
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
+<script src="{{ asset('js/thesis-upload.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     // Title character counter

@@ -21,8 +21,10 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
             'icon' => 'nullable|string|max:255',
+            'type' => 'nullable|string|in:article,thesis',
         ]);
         $data['slug'] = Str::slug($data['name']);
+        $data['type'] = $data['type'] ?? 'article';
 
         Category::create($data);
 
@@ -34,8 +36,10 @@ class CategoryController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name,'.$category->id,
             'icon' => 'nullable|string|max:255',
+            'type' => 'nullable|string|in:article,thesis',
         ]);
         $data['slug'] = Str::slug($data['name']);
+        $data['type'] = $data['type'] ?? 'article';
 
         $category->update($data);
 

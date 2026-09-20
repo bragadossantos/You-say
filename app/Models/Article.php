@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Article extends Model
@@ -12,6 +13,8 @@ class Article extends Model
 
     protected $fillable = [
         'user_id', 'category_id', 'title', 'slug', 'content', 'image', 'published_at', 'views', 'is_hidden',
+        'author_name', 'institution', 'course', 'academic_level', 'completion_year', 'country',
+        'document_path', 'document_original_name',
     ];
 
     protected function casts(): array
@@ -95,6 +98,43 @@ class Article extends Model
         return $this->image
             ? asset('storage/'.$this->image)
             : 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=900&q=80';
+    }
+
+    public function isThesis(): bool
+    {
+        return $this->category?->isThesis() ?? false;
+    }
+
+    /**
+     * Disco onde PDFs de monografias ficam guardados: usa um bucket S3-compatível
+     * quando configurado (persistente na Vercel), senão cai para o disco 'public'
+     * (suficiente para desenvolvimento local sem bucket).
+     */
+    public static function documentDisk(): string
+    {
+        return filled(config('filesystems.disks.s3.key')) && filled(config('filesystems.disks.s3.bucket'))
+            ? 's3'
+            : 'public';
+    }
+
+    public function documentUrl(string $disposition = 'inline'): ?string
+    {
+        if (! $this->document_path) {
+            return null;
+        }
+
+        $disk = static::documentDisk();
+        $filename = $this->document_original_name ?: basename($this->document_path);
+
+        if ($disk === 's3') {
+            return Storage::disk($disk)->temporaryUrl(
+                $this->document_path,
+                now()->addMinutes(5),
+                ['ResponseContentDisposition' => $disposition.'; filename="'.$filename.'"']
+            );
+        }
+
+        return Storage::disk($disk)->url($this->document_path);
     }
 
     public function excerpt(int $limit = 140): string

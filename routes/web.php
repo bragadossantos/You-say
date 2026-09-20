@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CommentController as AdminCommentController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\ArticleDocumentController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
@@ -25,6 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/meus-artigos', [ArticleController::class, 'my'])->name('articles.my');
     Route::get('/artigos/criar', [ArticleController::class, 'create'])->name('articles.create');
     Route::post('/artigos', [ArticleController::class, 'store'])->name('articles.store');
+    Route::post('/artigos/monografia/presign', [ArticleDocumentController::class, 'presign'])->name('articles.document.presign');
     Route::get('/artigos/{article:slug}/editar', [ArticleController::class, 'edit'])->name('articles.edit');
     Route::put('/artigos/{article:slug}', [ArticleController::class, 'update'])->name('articles.update');
     Route::delete('/artigos/{article:slug}', [ArticleController::class, 'destroy'])->name('articles.destroy');
@@ -44,6 +46,8 @@ Route::middleware('auth')->group(function () {
 
 // Public article show — AFTER specific routes so /artigos/criar is not caught
 Route::get('/artigos/{article:slug}', [ArticleController::class, 'show'])->name('articles.show');
+Route::get('/artigos/{article:slug}/documento', [ArticleDocumentController::class, 'view'])->name('articles.document.view');
+Route::get('/artigos/{article:slug}/documento/download', [ArticleDocumentController::class, 'download'])->name('articles.document.download');
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');

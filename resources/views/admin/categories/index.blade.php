@@ -16,6 +16,12 @@
                 <div class="mb-2">
                     <input type="text" name="icon" class="form-control" placeholder="Ícone (ex: bi-cpu) — opcional">
                 </div>
+                <div class="mb-2">
+                    <select name="type" class="form-select">
+                        <option value="article">Artigo normal</option>
+                        <option value="thesis">Monografia / Dissertação (upload de PDF)</option>
+                    </select>
+                </div>
                 <button class="btn btn-orange w-100">Adicionar</button>
             </form>
         </div>
@@ -23,11 +29,18 @@
     <div class="col-lg-8">
         <div class="stat-card p-0">
             <table class="table mb-0 align-middle">
-                <thead class="table-light"><tr><th>Nome</th><th>Artigos</th><th></th></tr></thead>
+                <thead class="table-light"><tr><th>Nome</th><th>Tipo</th><th>Artigos</th><th></th></tr></thead>
                 <tbody>
                 @foreach ($categories as $cat)
                     <tr>
                         <td><i class="bi {{ $cat->icon ?? 'bi-tag' }}"></i> {{ $cat->name }}</td>
+                        <td>
+                            @if ($cat->isThesis())
+                                <span class="badge text-bg-info">Monografia/Dissertação</span>
+                            @else
+                                <span class="badge text-bg-secondary">Artigo</span>
+                            @endif
+                        </td>
                         <td>{{ $cat->articles_count }}</td>
                         <td class="text-end">
                             <form action="{{ route('admin.categories.destroy', $cat) }}" method="POST" class="d-inline" onsubmit="return confirm('Remover categoria?');">

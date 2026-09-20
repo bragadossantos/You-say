@@ -19,7 +19,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('articles.update', $article) }}" method="POST" enctype="multipart/form-data" class="bg-white p-4 p-md-5 rounded-4 shadow-sm">
+            <form action="{{ route('articles.update', $article) }}" method="POST" enctype="multipart/form-data" class="bg-white p-4 p-md-5 rounded-4 shadow-sm" id="articleForm">
                 @csrf @method('PUT')
 
                 {{-- Title --}}
@@ -38,7 +38,7 @@
                         <label class="form-label fw-semibold"><i class="bi bi-tag"></i> Categoria</label>
                         <select name="category_id" class="form-select @error('category_id') is-invalid @enderror" required>
                             @foreach ($categories as $cat)
-                                <option value="{{ $cat->id }}" {{ old('category_id', $article->category_id) == $cat->id ? 'selected' : '' }}>
+                                <option value="{{ $cat->id }}" data-type="{{ $cat->type }}" {{ old('category_id', $article->category_id) == $cat->id ? 'selected' : '' }}>
                                     {{ $cat->name }}
                                 </option>
                             @endforeach
@@ -57,8 +57,8 @@
                     </div>
                 </div>
 
-                {{-- Current Image + New Upload --}}
-                <div class="mb-4">
+                {{-- Current Image + New Upload (artigo normal) --}}
+                <div class="mb-4" id="normalImageBlock">
                     <label class="form-label fw-semibold"><i class="bi bi-image"></i> Imagem de capa</label>
                     @if ($article->image)
                         <div class="mb-3 position-relative" style="max-height:250px; overflow:hidden; border-radius: var(--radius);">
@@ -72,6 +72,8 @@
                         <div class="text-danger small mt-1">{{ $message }}</div>
                     @enderror
                 </div>
+
+                @include('articles.partials.thesis-fields')
 
                 {{-- Content --}}
                 <div class="mb-4">
@@ -104,7 +106,7 @@
                             @csrf @method('DELETE')
                             <button class="btn btn-outline-danger px-4"><i class="bi bi-trash"></i> Eliminar</button>
                         </form>
-                        <button type="submit" class="btn btn-orange btn-lg px-5">
+                        <button type="submit" id="submitBtn" class="btn btn-orange btn-lg px-5">
                             <i class="bi bi-check2-circle"></i> Guardar alterações
                         </button>
                     </div>
@@ -153,6 +155,15 @@
 @endpush
 
 @push('scripts')
+<script>
+    window.DOCUMENT_DISK = @json($documentDisk);
+    window.DOCUMENT_PRESIGN_URL = @json(route('articles.document.presign'));
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+</script>
+<script src="{{ asset('js/thesis-upload.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const contentArea = document.getElementById('contentArea');

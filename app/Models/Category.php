@@ -9,10 +9,15 @@ class Category extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'icon'];
+    protected $fillable = ['name', 'slug', 'icon', 'type'];
 
     public function articles()
     {
         return $this->hasMany(Article::class);
+    }
+
+    public function isThesis(): bool
+    {
+        return $this->type === 'thesis';
     }
 }

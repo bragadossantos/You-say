@@ -24,6 +24,55 @@
                 <img src="{{ $article->imageUrl() }}" alt="{{ $article->title }}">
             </div>
 
+            @if ($article->isThesis())
+                <div class="thesis-meta mb-4 p-4 rounded-4">
+                    <div class="row g-3 mb-3">
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="text-muted small">Autor</div>
+                            <div class="fw-semibold">{{ $article->author_name }}</div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <div class="text-muted small">Universidade</div>
+                            <div class="fw-semibold">{{ $article->institution }}</div>
+                        </div>
+                        @if ($article->course)
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="text-muted small">Curso</div>
+                                <div class="fw-semibold">{{ $article->course }}</div>
+                            </div>
+                        @endif
+                        @if ($article->academic_level)
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="text-muted small">Nível académico</div>
+                                <div class="fw-semibold">{{ $article->academic_level }}</div>
+                            </div>
+                        @endif
+                        @if ($article->completion_year)
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="text-muted small">Ano de conclusão</div>
+                                <div class="fw-semibold">{{ $article->completion_year }}</div>
+                            </div>
+                        @endif
+                        @if ($article->country)
+                            <div class="col-sm-6 col-lg-4">
+                                <div class="text-muted small">País de origem</div>
+                                <div class="fw-semibold">{{ $article->country }}</div>
+                            </div>
+                        @endif
+                    </div>
+                    @if ($article->document_path)
+                        <div class="d-flex gap-2 flex-wrap">
+                            <a href="{{ route('articles.document.view', $article) }}" target="_blank" rel="noopener" class="btn btn-outline-orange">
+                                <i class="bi bi-eye"></i> Abrir PDF
+                            </a>
+                            <a href="{{ route('articles.document.download', $article) }}" class="btn btn-orange">
+                                <i class="bi bi-download"></i> Descarregar PDF
+                            </a>
+                        </div>
+                    @endif
+                </div>
+            @endif
+
             <div class="article-content mb-5">
                 {!! nl2br(e($article->content)) !!}
             </div>

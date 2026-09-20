@@ -133,6 +133,13 @@ a { text-decoration: none; }
 .article-content { font-size: 1.08rem; line-height: 1.85; color: #232a36; }
 .article-content p { margin-bottom: 1.2rem; }
 
+.thesis-meta { background: #f8f9fc; border: 1px solid #e9ecf3; }
+
+.badge-doc {
+  background: rgba(255,92,40,.12); color: var(--orange-dark);
+  font-weight: 600; font-size: .7rem; padding: .3rem .6rem; border-radius: 50px;
+}
+
 .reaction-btn {
   border: 1.5px solid #e5e9f0; background: #fff; border-radius: 50px;
   padding: .5rem 1.1rem; font-weight: 600; color: var(--navy);

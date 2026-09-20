@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Sociedade', 'icon' => 'bi-people'],
             ['name' => 'Desporto', 'icon' => 'bi-trophy'],
             ['name' => 'Cultura', 'icon' => 'bi-palette'],
+            ['name' => 'Monografias e Dissertações', 'icon' => 'bi-file-earmark-pdf-fill', 'type' => 'thesis'],
         ];
 
         foreach ($categorias as $cat) {
@@ -42,6 +43,7 @@ class DatabaseSeeder extends Seeder
                 'name' => $cat['name'],
                 'slug' => Str::slug($cat['name']),
                 'icon' => $cat['icon'],
+                'type' => $cat['type'] ?? 'article',
             ]);
         }
 

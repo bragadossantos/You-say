@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sessão Expirada — YouSay</title>
-    {{-- Redireciona automaticamente após 2 segundos --}}
-    <meta http-equiv="refresh" content="2;url=javascript:history.back()">
+    {{-- Redireciona automaticamente para a página anterior (pedido novo ao servidor, nunca a partir da cache) --}}
+    <meta http-equiv="refresh" content="2;url={{ url()->previous() }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -60,12 +60,12 @@
         <h1>Sessão Expirada</h1>
         <p>A sua sessão expirou por inatividade. A redirecionar automaticamente...</p>
         <div class="spinner"></div>
-        <a href="javascript:history.back()">Voltar e tentar novamente</a>
+        <a href="{{ url()->previous() }}">Voltar e tentar novamente</a>
     </div>
     <script>
-        // Volta à página anterior automaticamente após 1.5s
-        setTimeout(function() {
-            window.history.back();
+        // Volta à página anterior com um pedido novo ao servidor (token CSRF fresco)
+        setTimeout(function () {
+            window.location.href = @json(url()->previous());
         }, 1500);
     </script>
 </body>
